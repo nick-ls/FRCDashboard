@@ -49,12 +49,21 @@ function setLogin() {
   connect.textContent = 'Connect';
   // Add the default address and select xxxx
   address.value = 'roborio-xxxx-frc.local';
+  /**
+   * address.value can also be 10.xx.xx.2:1735 if the
+   * current value does not connect
+   */
   address.focus();
   address.setSelectionRange(8, 12);
 }
 // On click try to connect and disable the input and the button
 connect.onclick = () => {
-  ipc.send('connect', address.value);
+  let ipCheck = address.value.split(":");
+  if (ipCheck.length == 1) {
+    ipc.send('connect', address.value);
+  } else {
+    ipc.send('connect', ipCheck[0], Number(ipCheck[1]));
+  }
   address.disabled = connect.disabled = true;
   connect.textContent = 'Connecting...';
 };
